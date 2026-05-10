@@ -1,0 +1,32 @@
+const mongoose = require('mongoose');
+
+const slotSchema = new mongoose.Schema(
+  {
+    date:     { type: String,  required: true },  // 'YYYY-MM-DD'
+    time:     { type: String,  required: true },  // 'HH:MM'
+    isBooked: { type: Boolean, default: false },
+  },
+  { _id: true }
+);
+
+const expertSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    category: {
+      type: String,
+      required: true,
+      enum: ['Technology', 'Healthcare', 'Finance', 'Legal', 'Design', 'Marketing', 'Education', 'Business'],
+    },
+    experience:     { type: Number, required: true, min: 1 },
+    rating:         { type: Number, required: true, min: 1, max: 5 },
+    bio:            { type: String, required: true },
+    avatar:         { type: String, default: '' },
+    hourlyRate:     { type: Number, required: true },
+    availableSlots: [slotSchema],
+  },
+  { timestamps: true }
+);
+
+expertSchema.index({ name: 'text', bio: 'text' });
+
+module.exports = mongoose.model('Expert', expertSchema);
